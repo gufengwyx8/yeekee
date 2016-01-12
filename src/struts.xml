@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.i18n.encoding" value="gbk" />
+	<constant name="struts.custom.i18n.resources" value="applicationResource" />
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"></constant>
+	<constant name="struts.multipart.maxSize" value="90000000"></constant>
+
+	<package name="index" namespace="/" extends="struts-default">
+		<default-action-ref name="index" />
+		<action name="reg" class="userAction" method="reg">
+			<result name="input">/reg.jsp</result>
+			<result name="success" type="redirectAction">
+				login?user.email=${user.email}&amp;user.password=${user.password}
+			</result>
+		</action>
+		<action name="regNGO" class="userAction" method="reg">
+			<result name="input">/regNGO.jsp</result>
+			<result name="success" type="redirectAction">index</result>
+		</action>
+		<action name="login" class="userAction" method="login">
+			<result name="input">/login.jsp</result>
+			<result name="success" type="redirect">home/index</result>
+		</action>
+		<action name="index" class="userAction" method="autoLogin">
+			<result type="redirect">home/index</result>
+			<result name="input" type="redirectAction">login</result>
+		</action>
+	</package>
+
+	<package name="home" namespace="/home" extends="struts-default">
+		<default-action-ref name="index" />
+		<action name="index" class="homeAction">
+			<result>/home/index.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addStatus" class="homeAction" method="addStatus">
+			<result type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addBlog" class="homeAction" method="addBlog">
+			<result type="redirect">viewBlog?id=${news.id}</result>
+			<result name="input">/home/addblog.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addAttention" class="homeAction" method="addAttention">
+			<result type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addTask" class="homeAction" method="addTask">
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">400000000</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<result type="redirect">viewBlog?id=${news.id}</result>
+			<result name="input">/home/addTask.jsp</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addAction" class="homeAction" method="addAction">
+			<result type="redirect">viewBlog?id=${news.id}</result>
+			<result name="input">/home/addAction.jsp</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addPhoto" class="homeAction" method="addPhoto">
+			<result type="redirect">viewPhoto?id=${album.id}</result>
+			<result name="input">/home/addPhoto.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addAlbum" class="homeAction" method="addAlbum">
+			<result type="redirect">addPhoto</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addCategory" class="homeAction" method="addCategory">
+			<result type="redirect">addBlog</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="viewBlog" class="homeAction" method="viewBlog">
+			<result>/home/viewBlog.jsp</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="viewNews" class="homeAction" method="viewNews">
+			<result>/home/viewNews.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="viewPhoto" class="homeAction" method="viewPhoto">
+			<result>/home/viewPhoto.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addBlogReply" class="homeAction" method="addBlogReply">
+			<result type="redirect">viewBlog?id=${id}&amp;pageNo=${maxPage}</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addUserReply" class="homeAction" method="addUserReply">
+			<result type="redirect">personalInfoReply?id=${id}</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="taskHall" class="hallAction" method="taskHall">
+			<result>/home/taskHall.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="actionHall" class="hallAction" method="actionHall">
+			<result>/home/actionHall.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="ngoHall" class="hallAction" method="ngoHall">
+			<result>/home/ngoHall.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="personalInfoBlog" class="homeAction" method="personalInfoBlog">
+			<result>/home/personalInfoBlog.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="personalInfoReply" class="homeAction" method="personalInfoReply">
+			<result>/home/personalInfoReply.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="personalInfoAlbum" class="homeAction" method="personalInfoAlbum">
+			<result>/home/personalInfoAlbum.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addExecute" class="homeAction" method="addExecute">
+			<result type="redirect">
+				<param name="location">/home/viewBlog?id=${id}</param>
+			</result>
+		</action>
+		<action name="removeExecute" class="homeAction" method="removeExecute">
+			<result type="redirect">/home/executingTask</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="executingTask" class="homeAction" method="executingTask">
+			<result>/home/executingTask.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="finishedTask" class="homeAction" method="finishedTask">
+			<result>/home/finishedTask.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="gift" class="homeAction" method="gift">
+			<result>/home/gift.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="setLogo" class="homeAction" method="setLogo">
+			<result type="redirect">/home/viewPhoto?id=${id}</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="search" class="homeAction" method="search">
+			<result>/home/search.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="myTask" class="homeAction" method="myTask">
+			<result>/home/myTask.jsp</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="finishTask" class="homeAction" method="finishTask">
+			<result type="redirect">/home/myTask</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="removeBlog" class="homeAction" method="removeBlog">
+			<result type="redirect">/home/personalInfoBlog?id=${user.id}</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="removeAlbum" class="homeAction" method="removeAlbum">
+			<result type="redirect">/home/personalInfoAlbum?id=${user.id}</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addFile" class="homeAction" method="addFile">
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">400000000</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<result type="redirect">
+				<param name="location">/home/executingTask</param>
+			</result>
+			<result name="error" type="redirect">
+				<param name="location">/home/executingTask</param>
+			</result>
+			<result name="login_err" type="redirect">../index</result>
+		</action>
+		<action name="downloadFile" class="homeAction" method="downloadFile">
+			<result type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">filename="${news.file}"</param>
+			</result>
+			<result name="error" type="redirect">index</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="downloadNgoFile" class="homeAction" method="downloadNgoFile">
+			<result type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">filename="${news.ngoFile}"</param>
+			</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="uploadImage" class="homeAction" method="uploadImage">
+			<result>/home/uploadImage.jsp</result>
+			<result name="input">/home/uploadImage.jsp</result>
+			<result name="login_err" type="redirect">../index</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+	</package>
+
+	<package name="admin" namespace="/admin" extends="struts-default">
+		<default-action-ref name="index" />
+		<action name="login" class="adminAction" method="login">
+			<result name="input">/admin/login.jsp</result>
+			<result name="success" type="redirect">admin/index</result>
+		</action>
+		<action name="index" class="adminAction">
+			<result>/admin/index.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="user" class="adminAction" method="user">
+			<result>/admin/user.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="updateUser" class="adminAction" method="updateUser">
+			<result>/admin/updateUser.jsp</result>
+			<result name="remove" type="redirect">/admin/updateUser?id=${id}</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="message" class="adminAction" method="message">
+			<result>/admin/message.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="addNews" class="adminAction" method="addNews">
+			<result name="input">/admin/addNews.jsp</result>
+			<result type="redirect">/admin/message</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="score" class="adminAction" method="score">
+			<result>/admin/score.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="updateGift" class="adminAction" method="updateGift">
+			<result name="input">/admin/updateGift.jsp</result>
+			<result type="redirect">/admin/score</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="viewNews" class="adminAction" method="viewNews">
+			<result>/admin/viewNews.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+		<action name="changePassword" class="adminAction" method="changePassword">
+			<result type="redirect">/admin/</result>
+			<result name="input">/admin/changePassword.jsp</result>
+			<result name="login_err" type="redirect">/admin/login</result>
+			<exception-mapping result="login_err" exception="NullPointerException" />
+		</action>
+	</package>
+
+</struts>

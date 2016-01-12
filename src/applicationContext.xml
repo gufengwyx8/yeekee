@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  
+       http://www.springframework.org/schema/tx   
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop   
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+<!-- 配置数据源beans  -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+		<property name="configurationClass" value="org.hibernate.cfg.AnnotationConfiguration" />
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="allManagerMethod" expression="execution(* com.yeekee.service.*.*(..))" />
+		<aop:advisor pointcut-ref="allManagerMethod" advice-ref="txAdvice" />
+	</aop:config>
+	
+<!-- DAO层beans -->
+
+	<bean id="userDAO" class="com.yeekee.dao.impl.UserDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="freshNewsDAO" class="com.yeekee.dao.impl.FreshNewsDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="replyDAO" class="com.yeekee.dao.impl.ReplyDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="photoDAO" class="com.yeekee.dao.impl.PhotoDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="giftDAO" class="com.yeekee.dao.impl.GiftDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+	
+	<bean id="categoryDAO" class="com.yeekee.dao.impl.CategoryDAOImpl">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
+
+<!-- Service层beans -->
+
+	<bean id="userManager" class="com.yeekee.service.impl.UserManagerImpl">
+		<property name="userDAO" ref="userDAO" />
+		<property name="replyDAO" ref="replyDAO" />
+	</bean>
+	
+	<bean id="freshNewsManager" class="com.yeekee.service.impl.FreshNewsManagerImpl">
+		<property name="freshNewsDAO" ref="freshNewsDAO" />
+		<property name="replyDAO" ref="replyDAO" />
+		<property name="categoryDAO" ref="categoryDAO" />
+	</bean>
+	
+	<bean id="replyManager" class="com.yeekee.service.impl.ReplyManagerImpl">
+		<property name="replyDAO" ref="replyDAO" />
+	</bean>
+	
+	<bean id="photoManager" class="com.yeekee.service.impl.PhotoManagerImpl">
+		<property name="photoDAO" ref="photoDAO" />
+	</bean>
+	
+	<bean id="giftManager" class="com.yeekee.service.impl.GiftManagerImpl">
+		<property name="giftDAO" ref="giftDAO" />
+	</bean>
+	
+<!-- Action层beans -->
+
+	<bean id="userAction" class="com.yeekee.action.UserAction" scope="prototype">
+		<property name="userManager" ref="userManager" />
+	</bean>
+	
+	<bean id="homeAction" class="com.yeekee.action.HomeAction" scope="prototype">
+		<property name="userManager" ref="userManager" />
+		<property name="freshNewsManager" ref="freshNewsManager" />
+		<property name="photoManager" ref="photoManager" />
+		<property name="giftManager" ref="giftManager" />
+	</bean>
+	
+	<bean id="hallAction" class="com.yeekee.action.HallAction" scope="prototype">
+		<property name="freshNewsManager" ref="freshNewsManager" />
+		<property name="userManager" ref="userManager" />
+	</bean>
+	
+	<bean id="adminAction" class="com.yeekee.action.AdminAction" scope="prototype">
+		<property name="userManager" ref="userManager" />
+		<property name="freshNewsManager" ref="freshNewsManager" />
+		<property name="photoManager" ref="photoManager" />
+		<property name="giftManager" ref="giftManager" />
+	</bean>
+</beans>

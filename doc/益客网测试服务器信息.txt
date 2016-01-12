@@ -1,0 +1,19 @@
+全局用户名： yeekee 全局密码： u0po9jxr(只要是要用密码的，都是这个) 
+  
+FTP信息（tomcat 6.0 网站文件存放位置） 
+地址： admin.s30.javaidc.com 端口： 22    
+ 
+  
+数据库信息（MySQL 5.1） 
+地址： admin.s30.javaidc.com 端口： 3310  库名称： javaidc_yeekee 
+ 
+http://3039.s30.javaidc.com
+
+环境配置 
+ 
+JDK： JDK 1.6   
+WEB服务器： tomcat 6.0   
+数据库： MySQL 5.1 　
+关闭gzip加速
+编码配置： TOMCAT编码  UTF-8 GBK　　数据库编码  UTF-8 GBK 　　　    
+
